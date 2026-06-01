@@ -20,7 +20,8 @@
 			<!-- pageContext.request.contextPath = <Tên project>  -->
 			<%-- <a href="${pageContext.request.contextPath}/register">Đăng ký</a> --%>
 			<form action="${pageContext.request.contextPath}/admin/posts"
-				method="POST">
+				method="POST"
+				enctype="multipart/form-data">
 				<div class="mb-3">
 				  <label class="form-label">Tiêu đề</label>
 				  <!-- bean.title => bean.getTitle() -->
@@ -63,6 +64,11 @@
 					</div>
 					<small class="text-danger">${bean.errors.errStatus}</small>
 				</div>
+				<div class="mb-3">
+				  <label for="formFile" class="form-label">Ảnh bài viết</label>
+				  <input name="image" accept="image/*" class="form-control" type="file" id="formFile">
+				</div>
+				
 				<button type="submit" class="btn btn-primary">Thêm</button>
 			</form>
 		</div>

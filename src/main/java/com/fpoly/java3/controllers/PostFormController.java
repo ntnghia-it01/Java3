@@ -1,12 +1,16 @@
 package com.fpoly.java3.controllers;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
+
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -18,6 +22,7 @@ import com.fpoly.java3.entities.Category;
  * Servlet implementation class PostFormController
  */
 @WebServlet("/admin/posts")
+@MultipartConfig  // Nhận dữ liệu file được submit 
 public class PostFormController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -72,6 +77,29 @@ public class PostFormController extends HttpServlet {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+//		BeanUtils chỉ hỗ trợ chuyển đổi dữ liệu nguyên thuỷ 
+		
+//		Lấy thông tin của file khi submit 
+		Part image = request.getPart("image");
+		
+		System.out.println(image.getContentType()); // Kiểu của file 
+		System.out.println(image.getSize()); // Kích thước của file byte 
+//		1kb == 1024 byte
+//		1 byte == 8 bit
+		System.out.println(image.getSubmittedFileName()); // Tên file lưu trên máy user
+		
+//		Mỗi lần lưu ảnh sẽ có 1 tên ảnh mới khác hoàn toàn với các ảnh đã có ???
+//		Cắt phần định dạng file từ getContentType => image/png, image/jpg,...
+//		image/png => split("/") => ["image", "png"]
+		String ext = image.getContentType().split("/")[1]; 
+		// Thời gian hiện tại trừ năm 1900 || 1970 -> đổi qua ms 
+		String fileName = String.valueOf(new Date().getTime()); 
+		String path =  "/images/" + fileName + "." + ext;
+		String pathContext = request.getServletContext().getRealPath(path);
+		image.write(pathContext);
+		
+		System.out.println(pathContext);
 		
 		request.setAttribute("bean", bean);
 		
