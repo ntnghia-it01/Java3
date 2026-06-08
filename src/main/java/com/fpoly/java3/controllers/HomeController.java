@@ -2,12 +2,14 @@ package com.fpoly.java3.controllers;
 
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.fpoly.java3.beans.UserBean;
+import com.fpoly.java3.config.DatabaseConnection;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -26,6 +28,8 @@ public class HomeController extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		
+		Connection connection = DatabaseConnection.connection();
 		
 //		setAttribute là model để gửi dữ liệu từ C => V
 //		Key, value 
