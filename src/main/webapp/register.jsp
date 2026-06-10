@@ -44,6 +44,7 @@
 				</div>
 				
 				<button type="submit" class="btn btn-primary">Đăng ký</button>
+				<small class="text-danger">${errServices}</small>
 			</form>
 		</div>
 	</div>

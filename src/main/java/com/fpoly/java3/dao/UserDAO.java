@@ -90,6 +90,63 @@ public class UserDAO {
 		
 	}
 	
+	public boolean emailExist(String email) {
+		Connection connection = DatabaseConnection.connection();
+		try {
+			String sql = "SELECT * FROM users WHERE email=?";
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setString(1, email);
+			
+			ResultSet resultSet = statement.executeQuery();
+			
+			boolean check = resultSet.next();
+			
+			connection.close();
+			
+			return check;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		try {
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public boolean phoneExist(String phone) {
+		
+		Connection connection = DatabaseConnection.connection();
+		try {
+			String sql = "SELECT * FROM users WHERE phone=?";
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setString(1, phone);
+			
+			ResultSet resultSet = statement.executeQuery();
+			
+			boolean check = resultSet.next();
+			
+			connection.close();
+			
+			return check;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		try {
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
 //	public boolean update(User user) {
 //		
 //	}
