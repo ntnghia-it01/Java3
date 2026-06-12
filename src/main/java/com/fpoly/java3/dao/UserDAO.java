@@ -147,15 +147,108 @@ public class UserDAO {
 		return false;
 	}
 	
-//	public boolean update(User user) {
-//		
-//	}
-//	
-//	public boolean delete(User user) {
-//		
-//	}
-//	
-//	public User getById(int id) {
-//		
-//	}
+	public boolean update(User user) {
+		Connection connection = DatabaseConnection.connection();
+		try {
+			String sql = "UPDATE users SET "
+					+ "full_name=?, email=?, password_hash=?, phone=?, avatar=?, role=?, status=? "
+					+ "WHERE id=?";
+			
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setString(1, user.getFullName());
+			statement.setString(2, user.getEmail());
+			statement.setString(3, user.getPasswordHash());
+			statement.setString(4, user.getPhone());
+			statement.setString(5, user.getAvatar());
+			statement.setInt(6, user.getRole());
+			statement.setBoolean(7, user.isStatus());
+			statement.setInt(8, user.getId());
+			
+			int check = statement.executeUpdate();
+			
+			connection.close();
+			
+			if (check == 0) {
+				return false;
+			}
+			return true;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			try {
+				connection.close();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			return false;
+		}
+	}
+
+	public boolean delete(int id) {
+		Connection connection = DatabaseConnection.connection();
+		try {
+			String sql = "DELETE FROM users WHERE id=?";
+			
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setInt(1, id);
+			
+			int check = statement.executeUpdate();
+			
+			connection.close();
+			
+			if (check == 0) {
+				return false;
+			}
+			return true;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			try {
+				connection.close();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			return false;
+		}
+	}
+
+	public User getById(int id) {
+		Connection connection = DatabaseConnection.connection();
+		try {
+			String sql = "SELECT * FROM users WHERE id=?";
+			
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setInt(1, id);
+			
+			ResultSet rs = statement.executeQuery();
+			
+			if (rs.next()) {
+				User user = new User();
+				
+				user.setId(rs.getInt("id"));
+				user.setFullName(rs.getString("full_name"));
+				user.setEmail(rs.getString("email"));
+				user.setPasswordHash(rs.getString("password_hash"));
+				user.setPhone(rs.getString("phone"));
+				user.setAvatar(rs.getString("avatar"));
+				user.setRole(rs.getInt("role"));
+				user.setStatus(rs.getBoolean("status"));
+				
+				connection.close();
+				return user;
+			}
+			
+			connection.close();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			try {
+				connection.close();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		}
+		
+		return null;
+	}
 }

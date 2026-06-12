@@ -11,6 +11,6 @@ public class Comment {
 	private int id;
     private User user;
     private Posts posts;
-    private int content;
+    private String content;
     private boolean status;
 }

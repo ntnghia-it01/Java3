@@ -70,6 +70,7 @@
 				</div>
 				
 				<button type="submit" class="btn btn-primary">Thêm</button>
+				<small class="text-danger">${error}</small>
 			</form>
 		</div>
 	</div>

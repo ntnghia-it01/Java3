@@ -16,7 +16,9 @@ import java.util.List;
 import org.apache.commons.beanutils.BeanUtils;
 
 import com.fpoly.java3.beans.PostsFormBean;
+import com.fpoly.java3.dao.CategoryDAO;
 import com.fpoly.java3.entities.Category;
+import com.fpoly.java3.services.PostsServices;
 
 /**
  * Servlet implementation class PostFormController
@@ -38,21 +40,9 @@ public class PostFormController extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//		Khởi tạo 1 danh sách danh mục với 5 danh mục ngẫu nhiên
-		List<Category> categories = new ArrayList<Category>();
-		categories.add(new Category(1, "Danh mục 1", false));
-		categories.add(new Category(2, "Danh mục 2", false));
-		categories.add(new Category(3, "Danh mục 3", false));
-		categories.add(new Category(4, "Danh mục 4", false));
-		categories.add(new Category(5, "Danh mục 5", false));
-		
-//		Gửi dữ liệu từ Controller qua View 
+		CategoryDAO categoryDAO = new CategoryDAO();
+		List<Category> categories = categoryDAO.getList();
 		request.setAttribute("categories", categories);
-		
-//		Lấy dữ liệu query params ở url
-//		key=value&key=value
-//		http://localhost:8080/Java3/admin/posts?title=Ti%C3%AAu+%C4%91%E1%BB%81&content=N%E1%BB%99i+dung&category=4&status=2
-		
 		
 		request.getRequestDispatcher("/post-form.jsp").forward(request, response);
 	}
@@ -61,14 +51,8 @@ public class PostFormController extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		List<Category> categories = new ArrayList<Category>();
-		categories.add(new Category(1, "Danh mục 1", false));
-		categories.add(new Category(2, "Danh mục 2", false));
-		categories.add(new Category(3, "Danh mục 3", false));
-		categories.add(new Category(4, "Danh mục 4", false));
-		categories.add(new Category(5, "Danh mục 5", false));
-		
-//		Gửi dữ liệu từ Controller qua View 
+		CategoryDAO categoryDAO = new CategoryDAO();
+		List<Category> categories = categoryDAO.getList();
 		request.setAttribute("categories", categories);
 		
 		PostsFormBean bean = new PostsFormBean();
@@ -76,32 +60,20 @@ public class PostFormController extends HttpServlet {
 			BeanUtils.populate(bean, request.getParameterMap());
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		
-//		BeanUtils chỉ hỗ trợ chuyển đổi dữ liệu nguyên thuỷ 
-		
-//		Lấy thông tin của file khi submit 
+		} 
 		Part image = request.getPart("image");
-		
-		System.out.println(image.getContentType()); // Kiểu của file 
-		System.out.println(image.getSize()); // Kích thước của file byte 
-//		1kb == 1024 byte
-//		1 byte == 8 bit
-		System.out.println(image.getSubmittedFileName()); // Tên file lưu trên máy user
-		
-//		Mỗi lần lưu ảnh sẽ có 1 tên ảnh mới khác hoàn toàn với các ảnh đã có ???
-//		Cắt phần định dạng file từ getContentType => image/png, image/jpg,...
-//		image/png => split("/") => ["image", "png"]
-		String ext = image.getContentType().split("/")[1]; 
-		// Thời gian hiện tại trừ năm 1900 || 1970 -> đổi qua ms 
-		String fileName = String.valueOf(new Date().getTime()); 
-		String path =  "/images/" + fileName + "." + ext;
-		String pathContext = request.getServletContext().getRealPath(path);
-		image.write(pathContext);
-		
-		System.out.println(pathContext);
-		
+
 		request.setAttribute("bean", bean);
+		
+		if(bean.getErrors().isEmpty()) {
+			PostsServices postsServices = new PostsServices();
+			boolean insert = postsServices.createPosts(bean, image, request);
+			if(insert) {
+				System.out.println("Thêm bài viết thành công");
+			}else {
+				request.setAttribute("error", "Thêm bài viết thất bại");
+			}
+		}
 		
 		request.getRequestDispatcher("/post-form.jsp").forward(request, response);
 	}
