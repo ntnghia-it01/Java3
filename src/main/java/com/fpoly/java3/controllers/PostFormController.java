@@ -17,7 +17,9 @@ import org.apache.commons.beanutils.BeanUtils;
 
 import com.fpoly.java3.beans.PostsFormBean;
 import com.fpoly.java3.dao.CategoryDAO;
+import com.fpoly.java3.dao.PostsDAO;
 import com.fpoly.java3.entities.Category;
+import com.fpoly.java3.entities.Posts;
 import com.fpoly.java3.services.PostsServices;
 
 /**
@@ -40,9 +42,28 @@ public class PostFormController extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		CategoryDAO categoryDAO = new CategoryDAO();
-		List<Category> categories = categoryDAO.getList();
-		request.setAttribute("categories", categories);
+		try {
+			CategoryDAO categoryDAO = new CategoryDAO();
+			List<Category> categories = categoryDAO.getList();
+			request.setAttribute("categories", categories);
+			
+//			Nếu id parse thành công thì đang thực hiện chức năng sửa
+//			Ngược lại là thêm 
+			int id = Integer.parseInt(request.getParameter("id"));
+			PostsDAO postsDAO = new PostsDAO();
+			Posts posts = postsDAO.getById(id);
+//			Chuyển dữ liệu từ entity qua bean
+			PostsFormBean bean = new PostsFormBean();
+			bean.setTitle(posts.getTitle());
+			bean.setContent(posts.getContent());
+			bean.setCategory(posts.getCategory().getId());
+			bean.setStatus(posts.getStatus());
+			
+			request.setAttribute("bean", bean);
+			request.setAttribute("id", id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		request.getRequestDispatcher("/post-form.jsp").forward(request, response);
 	}
@@ -67,12 +88,26 @@ public class PostFormController extends HttpServlet {
 		
 		if(bean.getErrors().isEmpty()) {
 			PostsServices postsServices = new PostsServices();
-			boolean insert = postsServices.createPosts(bean, image, request);
-			if(insert) {
-				response.sendRedirect(request.getContextPath() + "/admin/posts-list");
-				return;
+			if(request.getParameter("id") == null) {
+//				Thêm
+				boolean insert = postsServices.createPosts(bean, image, request);
+				if(insert) {
+					response.sendRedirect(request.getContextPath() + "/admin/post-list");
+					return;
+				}else {
+					request.setAttribute("error", "Thêm bài viết thất bại");
+				}
+				
 			}else {
-				request.setAttribute("error", "Thêm bài viết thất bại");
+				// Sửa
+				
+				boolean insert = postsServices.updatePosts(bean, image, request, Integer.parseInt(request.getParameter("id")));
+				if(insert) {
+					response.sendRedirect(request.getContextPath() + "/admin/post-list");
+					return;
+				}else {
+					request.setAttribute("error", "Sửa bài viết thất bại");
+				}
 			}
 		}
 		

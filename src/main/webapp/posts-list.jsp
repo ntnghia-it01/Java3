@@ -39,7 +39,7 @@
 			      	<img src="${pageContext.request.contextPath}${item.thumbnail}" width="100" height="100"/>
 			      </td>
 			      <td>
-			      	<a class="btn btn-warning">Sửa</a>
+			      	<a href="${pageContext.request.contextPath}/admin/posts?id=${item.id}" class="btn btn-warning">Sửa</a>
 			      	<br/>
 			      	<form action="${pageContext.request.contextPath}/admin/post-delete"
 			      		method="POST">

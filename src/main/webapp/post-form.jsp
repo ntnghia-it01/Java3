@@ -19,7 +19,7 @@
 			<!-- localhost:8080/Java3/admin/posts -->
 			<!-- pageContext.request.contextPath = <Tên project>  -->
 			<%-- <a href="${pageContext.request.contextPath}/register">Đăng ký</a> --%>
-			<form action="${pageContext.request.contextPath}/admin/posts"
+			<form action="${pageContext.request.contextPath}/admin/posts${id == null ? '' : '?id='.concat(id)}"
 				method="POST"
 				enctype="multipart/form-data">
 				<div class="mb-3">
@@ -69,7 +69,7 @@
 				  <input name="image" accept="image/*" class="form-control" type="file" id="formFile">
 				</div>
 				
-				<button type="submit" class="btn btn-primary">Thêm</button>
+				<button type="submit" class="btn btn-primary">${id != null ? 'Sửa' : 'Thêm'}</button>
 				<small class="text-danger">${error}</small>
 			</form>
 		</div>
