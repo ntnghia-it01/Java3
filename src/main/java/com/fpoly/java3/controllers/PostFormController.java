@@ -69,7 +69,8 @@ public class PostFormController extends HttpServlet {
 			PostsServices postsServices = new PostsServices();
 			boolean insert = postsServices.createPosts(bean, image, request);
 			if(insert) {
-				System.out.println("Thêm bài viết thành công");
+				response.sendRedirect(request.getContextPath() + "/admin/posts-list");
+				return;
 			}else {
 				request.setAttribute("error", "Thêm bài viết thất bại");
 			}
