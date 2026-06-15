@@ -3,11 +3,14 @@ package com.fpoly.java3.services;
 import java.io.IOException;
 import java.util.Date;
 
+import com.fpoly.java3.beans.LoginBean;
 import com.fpoly.java3.beans.RegisterBean;
 import com.fpoly.java3.dao.UserDAO;
 import com.fpoly.java3.entities.User;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 
 public class UserServices {
@@ -62,6 +65,38 @@ public class UserServices {
 			return null;
 		}else {
 			return "Đăng ký thất bại";
+		}
+	}
+	
+//	String || Boolean
+	public boolean login(LoginBean bean, HttpServletResponse response) {
+		try {
+			UserDAO userDAO = new UserDAO();
+			User user = userDAO.getUserByEmail(bean.getEmail());
+			
+			if(user.getPasswordHash().equals(bean.getPassword())) {
+//				Thực hiện lưu userId và role vào cookie
+				Cookie userIdCookie = new Cookie("userId", String.valueOf(user.getId()));
+//				Thời hạn của cookie tính bằng giây
+				userIdCookie.setMaxAge(60 * 60 * 24 * 3);
+//				Tất cả các url con bên trong domain có thể truy cập được
+//				Nếu không set Path thì giá trị cookie chỉ có url hiện tại mới truy cập
+//				và sử dụng được 
+				userIdCookie.setPath("/");
+				response.addCookie(userIdCookie);
+				
+				Cookie roleCookie = new Cookie("role", String.valueOf(user.getRole()));
+				roleCookie.setMaxAge(60 * 60 * 24 * 3);
+				roleCookie.setPath("/");
+				response.addCookie(roleCookie);
+				
+				return true;
+			}
+			
+			return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
 		}
 	}
 }

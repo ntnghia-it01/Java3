@@ -45,6 +45,10 @@
 	<!-- empty user <=> user == null  -->
 	
 	<p>Footer</p>
+	
+	<a href="${pageContext.request.contextPath}/logout" class="btn btn-danger">
+			Đăng xuất
+		</a>
 </body>
 </html>
 

@@ -251,4 +251,48 @@ public class UserDAO {
 		
 		return null;
 	}
+	
+	public User getUserByEmail(String email) {
+		Connection connection = DatabaseConnection.connection();
+		try {
+			String sql = "SELECT * FROM users WHERE email=?";
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setString(1, email);
+			
+			ResultSet rs = statement.executeQuery();
+			
+			while (rs.next()) {
+				User user = new User();
+				int id = rs.getInt("id");
+				String name = rs.getString("full_name");
+				String password = rs.getString("password_hash");
+				String phone = rs.getString("phone");
+				String avatar = rs.getString("avatar");
+				int role = rs.getInt("role");
+				boolean status = rs.getBoolean("status");
+				user.setId(id);
+				user.setFullName(name);
+				user.setEmail(email);
+				user.setPasswordHash(password);
+				user.setPhone(phone);
+				user.setAvatar(avatar);
+				user.setRole(role);
+				user.setStatus(status);
+				
+				connection.close();
+				
+				return user;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		try {
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }
