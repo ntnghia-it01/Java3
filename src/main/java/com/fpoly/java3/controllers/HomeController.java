@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-// abc
+
 import com.fpoly.java3.beans.UserBean;
 import com.fpoly.java3.config.DatabaseConnection;
 
@@ -25,6 +25,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class HomeController extends HttpServlet{
 //	Phương thức GET của website
 //	URL gõ ở các browser đều gọi đến phương thức GET 
+	int abc;
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// TODO Auto-generated method stub
